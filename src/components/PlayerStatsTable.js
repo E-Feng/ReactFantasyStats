@@ -31,14 +31,20 @@ function PlayerStatsTable(props) {
   };
 
   return (
-    <Table>
-      <thead>
-        <tr>{createHeaders()}</tr>
-      </thead>
-      <tbody>{createTable()}</tbody>
-    </Table>
+    <Wrapper>
+      <Table>
+        <thead>
+          <tr>{createHeaders()}</tr>
+        </thead>
+        <tbody>{createTable()}</tbody>
+      </Table>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  overflow-x: scroll;
+`;
 
 const Table = styled.table`
   width: 100%;

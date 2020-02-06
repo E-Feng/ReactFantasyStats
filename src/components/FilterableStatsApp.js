@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Filters from './Filters';
 import PlayerStatsTable from './PlayerStatsTable';
 
+import styled from 'styled-components';
+
 function FilterableStatsApp() {
   const [stats, setStats] = useState([]);
   const [numShow, setNumShow] = useState(100);
@@ -28,7 +30,10 @@ function FilterableStatsApp() {
       const res = await fetch(fetchURL);
       const data = await res.json();
       const stats = JSON.parse(data);
-      stats.forEach(stat => (stat.visible = true));
+      stats.forEach(stat => {
+        stat.visible = true; 
+        stat.periodVis = true;
+      });
 
       // Initial sort by zscore, descending
       stats.sort((a, b) => (a.zscore > b.zscore ? -1 : 1));
@@ -39,56 +44,12 @@ function FilterableStatsApp() {
     fetchData();
   }, []);
 
-  const filterName = filterText => {
-    filterText = filterText.toLowerCase();
-
-    setStats(
-      stats.map(stat => {
-        const full_name = `${stat.first_name} ${stat.last_name}`.toLowerCase();
-        const containsText = full_name.search(filterText) !== -1;
-        stat.visible = containsText ? true : false;
-
-        return stat;
-      })
-    );
-  };
-
-  const filterPeriod = (filterVal, isChecked) => {
-    setStats(
-      stats.map(stat => {
-        if (stat.period === filterVal) {
-          stat.visible = isChecked ? true : false;
-        }
-
-        return stat;
-      })
-    );
-  };
-
-  const filterFA = (isChecked) => {
-    setStats(
-      stats.map(stat => {
-        if (isChecked) {
-          stat.visible = stat.team_id === null ? true : false;
-        } else {
-          stat.visible = true;
-        }
-
-        return stat;
-      })
-    )
-  }
-
   return (
     <div style={bodyStyle}>
-      <div style={appStyle}>
-        <Filters
-          filterName={filterName}
-          filterPeriod={filterPeriod}
-          filterFA={filterFA}
-        />
+      <AppStyle>
+        <Filters stats={stats} setStats={setStats} />
         <PlayerStatsTable stats={stats} numShow={numShow} headers={headers} />
-      </div>
+      </AppStyle>
     </div>
   );
 }
@@ -97,10 +58,14 @@ const bodyStyle = {
   background: '#f4f4f4'
 };
 
-const appStyle = {
-  width: '80%',
-  margin: 'auto',
-  padding: '10px 0'
-};
+const AppStyle = styled.div`
+  width: 80%;
+  margin: auto;
+  padding: 10px 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
 
 export default FilterableStatsApp;

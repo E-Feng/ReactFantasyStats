@@ -30,6 +30,10 @@ const FlexHeader = styled.div`
   flex-direction: row;
   margin: auto;
   width: 80%;
+
+  @media (max-width: 768px) {
+    width: 95%;
+  }
 `
 
 const Filler = styled.div`
